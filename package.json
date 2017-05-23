@@ -1,0 +1,16 @@
+{
+  "name": "asgn5",
+  "version": "0.0.2",
+  "description": "this is the first iteration of the project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "*",
+    "socket.io": "*",
+    "johnny-five": "*"
+  }
+}

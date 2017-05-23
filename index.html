@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <meta charset="UTF-8">
+    <title>Morse Code Decoder</title>
+</head>
+<body>
+<table>
+    <tr>
+        <th><h2>Morse Code Decoder</h2></th>
+    </tr>
+    <tr>
+        <td id = "subtitle"><h3>Control Panel</h3></td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <td>Trun Motion Sensor On/Off</td>
+        <td>
+            <button type="button" id = "start">Start</button>
+            <button type="button" id = "stop">Stop</button>
+        </td>
+    </tr>
+    <tr>
+        <td>display current word</td>
+        <td><p id = "word"></p></td>
+    </tr>
+    <tr>
+        <td>display current Morse code</td>
+        <td><p id = "code"></p></td>
+    </tr>
+    <tr>
+        <td>display whole sentence</td>
+        <td><p id = "sentence"></p></td>
+    </tr>
+</table>
+</body>
+
+<script>
+    var word = '';
+    var sentence = '';
+    var code = '';
+    document.getElementById("word").innerHTML = 'this section intend to display current word that is receiving from server';
+    document.getElementById("sentence").innerHTML = 'this section intend to display whole message thathas been received from server';
+    document.getElementById("code").innerHTML = 'this section intend to display the Morse code for current word';
+</script>
+
+<script>
+    $(function(){
+        var client = io.connect('http://localhost:8080');
+        client.on("output", function(data){
+            word = word + data.output;
+            document.getElementById("word").innerHTML = word;
+        });
+        client.on("space", function(){
+            sentence = sentence + ' ' + word;
+            word = '';
+            code = '';
+            document.getElementById("sentence").innerHTML = sentence;
+        });
+        client.on("morse", function(data){
+            code = code + data.morse;
+            document.getElementById("code").innerHTML = code;
+        });
+        client.on("char", function(){
+            code = code + ' ';
+            document.getElementById("code").innerHTML = code;
+        });
+        client.on("empty", function(){
+            word = '';
+            code = '';
+            sentence = '';
+            document.getElementById("word").innerHTML = word;
+            document.getElementById("code").innerHTML = code;
+            document.getElementById("sentence").innerHTML = sentence;
+        });
+        $("#start").click(function(){
+            client.emit("start");
+        });
+        $("#stop").click(function(){
+            client.emit("stop");
+        });
+    });
+</script>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 50%;
+    }
+
+    th, td {
+        text-align: center;
+        padding: 8px;
+    }
+
+    tr:nth-child(even){background-color: #f2f2f2}
+
+    th {
+        background-color: #201eaf;
+        color: #fdfffb;
+    }
+
+    td {
+        color: #000000;
+    }
+    button{
+        color: #000000;
+    }
+    #subtitle{
+        color: #fefefe;
+        background-color: #67c5ff;
+    }
+</style>
+</html>
